@@ -1,15 +1,17 @@
 package com.chirchir.rm.api;
 
 import com.chirchir.rm.models.Business;
+import com.chirchir.rm.models.Listing;
 import com.chirchir.rm.repositories.BusinessRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/business")
+@RequestMapping("/api/businesses")
 public class BusinessRestController {
 
     private BusinessRepository repository;
@@ -20,23 +22,34 @@ public class BusinessRestController {
         this.repository = repository;
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Business>> getAll(){
+    @GetMapping("/")
+    public ResponseEntity<Response<Business>> getAll(){
 
-        return ResponseEntity.ok(repository.findAll());
+        Response<Business> response = new Response<>();
+        List<Business> businesses = repository.findAll();
+        response.setResults(businesses);
+        response.setTotal(businesses.size());
+        return ResponseEntity.ok(response);
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Business> findById(@PathVariable("id") Long id){
+    public ResponseEntity<Response<Business>> findById(@PathVariable("id") Long id){
 
         Business business = repository.findById(id).orElse(null);
+        Response<Business> response = new Response<>();
+        List<Business> businesses = new ArrayList<>();
 
         if (business != null){
-            return ResponseEntity.ok(business);
+            businesses.add(business);
+            response.setTotal(1);
+            response.setResults(businesses);
+            return ResponseEntity.ok(response);
         }
 
-        return ResponseEntity.ok(new Business());
+        response.setTotal(businesses.size());
+        response.setResults(businesses);
+        return ResponseEntity.ok(response);
     }
 
 
