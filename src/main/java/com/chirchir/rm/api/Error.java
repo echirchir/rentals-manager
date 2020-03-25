@@ -1,17 +1,16 @@
 package com.chirchir.rm.api;
 
-import lombok.*;
 
-import java.util.List;
+import lombok.*;
 
 @Getter
 @Setter
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Response<T> {
+public class Error<T> {
 
-    private int total;
     private String message;
-    private List<T> results;
+
+    private T model;
 }
