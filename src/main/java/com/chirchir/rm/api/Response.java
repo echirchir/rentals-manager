@@ -12,6 +12,7 @@ import java.util.List;
 public class Response<T> {
 
     private int total;
+    private boolean success;
     private String message;
     private List<T> results;
 }

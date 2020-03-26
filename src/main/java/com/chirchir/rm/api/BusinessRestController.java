@@ -4,6 +4,7 @@ import com.chirchir.rm.dto.BusinessForm;
 import com.chirchir.rm.models.Business;
 import com.chirchir.rm.models.Listing;
 import com.chirchir.rm.repositories.BusinessRepository;
+import com.chirchir.rm.services.BusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -11,27 +12,29 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/businesses")
 public class BusinessRestController {
 
-    private BusinessRepository repository;
+    private BusinessService service;
 
     @Autowired
-    public BusinessRestController(BusinessRepository repository){
+    public BusinessRestController(BusinessService service){
 
-        this.repository = repository;
+        this.service = service;
     }
 
     @GetMapping("/")
     public ResponseEntity<Response<Business>> getAll(){
 
         Response<Business> response = new Response<>();
-        List<Business> businesses = repository.findAll();
+        List<Business> businesses = service.findAll();
         response.setResults(businesses);
         response.setMessage("Success");
+        response.setSuccess(true);
         response.setTotal(businesses.size());
         return ResponseEntity.ok(response);
     }
@@ -39,7 +42,7 @@ public class BusinessRestController {
     @GetMapping("/{id}")
     public ResponseEntity<Response<Business>> findById(@PathVariable("id") Long id){
 
-        Business business = repository.findById(id).orElse(null);
+        Business business = service.findById(id);
         Response<Business> response = new Response<>();
         List<Business> businesses = new ArrayList<>();
 
@@ -47,6 +50,7 @@ public class BusinessRestController {
             businesses.add(business);
             response.setTotal(1);
             response.setResults(businesses);
+            response.setSuccess(true);
             response.setMessage("Success");
             return ResponseEntity.ok(response);
         }
@@ -58,23 +62,37 @@ public class BusinessRestController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Response<Business>> createCustomer(@RequestBody @Valid BusinessForm businessForm, BindingResult bindingResult){
+    public ResponseEntity<Response<Business>> createBusiness(@RequestBody @Valid BusinessForm businessForm, BindingResult bindingResult){
 
         List<Business> businesses = new ArrayList<>();
 
         if (bindingResult.hasErrors()) {
 
-            //bindingResult.getAllErrors();
-
             Response<Business> response = new Response<>();
-            response.setMessage("Invalid object!");
-            businesses.add(new Business());
+            response.setMessage(bindingResult.getAllErrors().toString());
             response.setResults(businesses);
 
             return ResponseEntity.ok(response);
         }
 
-        return ResponseEntity.ok( new Response<Business>());
+        Business business = new Business();
+        business.setActive(true);
+        business.setBusinessName(businessForm.getBusinessName());
+        business.setBusinessManager(businessForm.getBusinessManager());
+        business.setAddress(businessForm.getAddress());
+        business.setPhoneNumber(businessForm.getPhoneNumber());
+        business.setLocation(businessForm.getLocation());
+        business.setEmailAddress(businessForm.getEmailAddress());
+        business.setTotalProperties(0);
+        business.setCreatedDate(new Date().toString());
+
+        service.save(business);
+        Response<Business> response = new Response<>();
+        response.setSuccess(true);
+        response.setTotal(businesses.size());
+        response.setMessage("Business created successfully");
+
+        return ResponseEntity.ok( response );
     }
 
 }

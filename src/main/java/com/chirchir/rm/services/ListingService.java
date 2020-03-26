@@ -23,6 +23,11 @@ public class ListingService {
         return repository.findAll();
     }
 
+    public Listing findById(Long id){
+
+        return repository.findById(id).orElse(null);
+    }
+
     public Listing save(Listing listing){
 
         return repository.save(listing);
