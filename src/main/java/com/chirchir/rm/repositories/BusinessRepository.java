@@ -9,6 +9,8 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
 
     Business findByEmailAddress(String emailAddress);
 
+    Business findByBusinessName(String businessName);
+
     Business findByPhoneNumber(String phoneNumber);
 
     List<Business> findByActive(boolean active);

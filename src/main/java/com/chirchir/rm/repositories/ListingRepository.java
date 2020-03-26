@@ -9,5 +9,5 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
 
     List<Listing> findByPropertyId(Long id);
 
-
+    List<Listing> findByListingStatus(String status);
 }

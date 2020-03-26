@@ -1,11 +1,8 @@
 package com.chirchir.rm.api;
 
 import com.chirchir.rm.dto.ListingForm;
-import com.chirchir.rm.dto.PropertyForm;
-import com.chirchir.rm.models.Business;
 import com.chirchir.rm.models.Listing;
 import com.chirchir.rm.models.Property;
-import com.chirchir.rm.repositories.ListingRepository;
 import com.chirchir.rm.services.ListingService;
 import com.chirchir.rm.services.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,31 @@ public class ListingRestController {
         response.setTotal(listings.size());
         response.setMessage("Success");
         response.setSuccess(true);
+        return ResponseEntity.ok(response);
+
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Response<Listing>> findByStatus(@RequestParam(name = "status") String status){
+
+        List<Listing> results = listingService.findByListingStatus(status);
+        Response<Listing> response = new Response<>();
+
+        if (results == null){
+
+            response.setTotal(0);
+            response.setMessage("No matching listings found");
+            response.setResults(null);
+            response.setSuccess(false);
+
+            return ResponseEntity.ok(response);
+        }
+
+        response.setResults(results);
+        response.setTotal(results.size());
+        response.setSuccess(true);
+        response.setMessage("Success");
+
         return ResponseEntity.ok(response);
 
     }

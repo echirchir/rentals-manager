@@ -37,4 +37,9 @@ public class ListingService {
 
         return repository.findByPropertyId(id);
     }
+
+    public List<Listing> findByListingStatus(String status){
+
+        return repository.findByListingStatus(status);
+    }
 }

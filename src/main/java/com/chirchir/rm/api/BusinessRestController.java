@@ -2,8 +2,6 @@ package com.chirchir.rm.api;
 
 import com.chirchir.rm.dto.BusinessForm;
 import com.chirchir.rm.models.Business;
-import com.chirchir.rm.models.Listing;
-import com.chirchir.rm.repositories.BusinessRepository;
 import com.chirchir.rm.services.BusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +57,20 @@ public class BusinessRestController {
         response.setMessage("Business Not Found");
         response.setResults(businesses);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Response<Business>> findByLocation(@RequestParam(name = "location") String location){
+
+        List<Business> results = service.findByLocation(location);
+        Response<Business> response = new Response<>();
+
+        response.setTotal(results.size());
+        response.setResults(results);
+        response.setSuccess(true);
+        response.setMessage("Success");
+        return ResponseEntity.ok(response);
+
     }
 
     @PostMapping("/new")

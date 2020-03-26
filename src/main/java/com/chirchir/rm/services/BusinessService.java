@@ -39,6 +39,11 @@ public class BusinessService {
         return repository.findByEmailAddress(emailAddress);
     }
 
+    public Business findByBusinessName(String businessName){
+
+        return repository.findByBusinessName(businessName);
+    }
+
     public Business findByPhoneNumber(String phoneNumber){
 
         return repository.findByPhoneNumber(phoneNumber);

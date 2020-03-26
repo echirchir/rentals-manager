@@ -2,6 +2,7 @@ package com.chirchir.rm.api;
 
 import com.chirchir.rm.dto.PropertyForm;
 import com.chirchir.rm.models.Business;
+import com.chirchir.rm.models.Listing;
 import com.chirchir.rm.models.Property;
 import com.chirchir.rm.services.BusinessService;
 import com.chirchir.rm.services.PropertyService;
@@ -64,6 +65,33 @@ public class PropertyRestController {
         response.setMessage("Property Not Found!");
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Response<Property>> findByPropertyName(@RequestParam(name = "name") String name){
+
+        Property results = propertyService.findByPropertyName(name);
+        Response<Property> response = new Response<>();
+
+        List<Property> properties = new ArrayList<>();
+
+        if (results == null){
+
+            response.setTotal(0);
+            response.setMessage("No matching properties found");
+            response.setResults(null);
+            response.setSuccess(false);
+
+            return ResponseEntity.ok(response);
+        }
+
+        properties.add(results);
+        response.setResults(properties);
+        response.setSuccess(true);
+        response.setMessage("Success");
+
+        return ResponseEntity.ok(response);
+
     }
 
     @PostMapping("/new/{id}")
